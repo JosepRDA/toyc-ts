@@ -1,7 +1,7 @@
 import { KEYWORDS, SINGLE_CHAR_TOKENS, TokenType } from "./tokens";
 import { isDigit, isAlpha, isAlphaNumeric } from "./tokens";
 
-interface Token {
+export interface Token {
   type: TokenType;
   value: string;
   start: number;
