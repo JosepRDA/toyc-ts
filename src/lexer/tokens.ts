@@ -1,20 +1,18 @@
 export enum TokenType {
   // Keywords
-  IMPORT = "import",
-  TYPE = "type",
-  FUNCTION = "fn",
-  LET = "let",
   FOR = "for",
+  WHILE = "while",
   RETURN = "return",
   IF = "if",
   ELSE = "else",
-  MAIN = "main",
+  SWITCH = "switch",
+  CASE = "case",
 
   // Primitive types
-  I8 = "i8",
-  I16 = "i16",
-  F16 = "f16",
-  STR = "str",
+  INT = "int",
+  FLOAT = "float",
+  CHAR = "char",
+  VOID = "void",
 
   // Symbols
   LPAREN = "(",
@@ -28,19 +26,25 @@ export enum TokenType {
   EQ = "=",
   PLUS = "+",
   MINUS = "-",
-  MUL = "*",
+  STAR = "*",
   DIV = "/",
-  EXP = "^",
+  // REVDIV = "\\",
   GT = ">",
   LT = "<",
   GTE = ">=",
   LTE = "<=",
   EQEQ = "==",
+  HASH = "#",
 
   // Identifiers
   IDENTIFIER = "identifier",
   NUMLITERAL = "numliteral",
   STRLITERAL = "strliteral",
+
+  // preprocessor directives 
+  INCLUDE = "directive",
+  DEFINE = "directive",
+  // TODO: add pragma, ifdef, __FILE__, etc.
 
   // End of file
   EOF = "eof",
@@ -59,22 +63,30 @@ export const SINGLE_CHAR_TOKENS: Record<string, TokenType> = {
   ".": TokenType.DOT,
   "+": TokenType.PLUS,
   "-": TokenType.MINUS,
-  "*": TokenType.MUL,
+  "*": TokenType.STAR,
   "/": TokenType.DIV,
-  "^": TokenType.EXP,
+  "#": TokenType.HASH,
+  // "\\": TokenType.REVDIV,
 };
 
 export const KEYWORDS: Record<string, TokenType> = {
-  import: TokenType.IMPORT,
-  type: TokenType.TYPE,
-  function: TokenType.FUNCTION,
-  let: TokenType.LET,
-  for: TokenType.FOR,
-  return: TokenType.RETURN,
-  if: TokenType.IF,
-  else: TokenType.ELSE,
-  main: TokenType.MAIN,
+  "int": TokenType.INT,
+  "float": TokenType.FLOAT,
+  "char": TokenType.CHAR,
+  "void": TokenType.VOID,
+  "for": TokenType.FOR,
+  "while": TokenType.WHILE,
+  "switch": TokenType.SWITCH,
+  "case": TokenType.CASE,
+  "return": TokenType.RETURN,
+  "if": TokenType.IF,
+  "else": TokenType.ELSE,
 };
+
+export const DIRECTIVES: Record<string, TokenType> = {
+    "include": TokenType.INCLUDE,
+    "define": TokenType.DEFINE
+}
 
 export function isDigit(ch: string): boolean {
   return ch >= "0" && ch <= "9";
@@ -86,4 +98,8 @@ export function isAlpha(ch: string): boolean {
 
 export function isAlphaNumeric(ch: string): boolean {
   return isAlpha(ch) || isDigit(ch);
+}
+
+export function isSpaceCharacter(ch: string): boolean {
+    return ch === " " || ch == "\t" || ch == "\r";
 }

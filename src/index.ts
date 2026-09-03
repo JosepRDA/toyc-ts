@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import { Lexer } from "./lexer";
 import { TokenType } from "./lexer/tokens";
 
-export default async function main(filePath: string) {
+export default function main(filePath: string) {
   console.log(`Compiling ${filePath}`);
 
   const src = readFileSync(filePath, "utf-8");

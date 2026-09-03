@@ -1,20 +1,23 @@
-import { KEYWORDS, SINGLE_CHAR_TOKENS, TokenType } from "./tokens";
+import { DIRECTIVES, isSpaceCharacter, KEYWORDS, SINGLE_CHAR_TOKENS, TokenType } from "./tokens";
 import { isDigit, isAlpha, isAlphaNumeric } from "./tokens";
 
 export interface Token {
   type: TokenType;
-  value: string;
+  value: string;    // algebraic data types would save me so much now...
   start: number;
   end: number;
+  line: number;
 }
 
 export class Lexer {
   src: string; // source program text
   pos: number; // current position of lexer in the program text
+  line: number;  // current line in the source code
 
   constructor(src: string) {
     this.src = src + "\0";
     this.pos = 0;
+    this.line = 0;
   }
 
   nextToken(): Token {
@@ -25,12 +28,19 @@ export class Lexer {
         return this.makeToken(TokenType.EOF, "");
       }
 
-      if (ch === " " || ch === "\t" || ch == "\r") {
+      // ignore space characters
+      if (isSpaceCharacter(ch)) {
         this.pos++;
         continue;
       }
 
+      if (ch === "#") {
+        this.pos++;
+        return this.readDirective();
+      }
+
       if (ch === "\n") {
+        this.line++;
         this.pos++;
         return this.makeToken(TokenType.EOL, "\n");
       }
@@ -62,6 +72,7 @@ export class Lexer {
               value: "==",
               start,
               end: this.pos - 1,
+              line: this.line
             };
           }
 
@@ -78,6 +89,7 @@ export class Lexer {
               value: ">=",
               start,
               end: this.pos - 1,
+              line: this.line
             };
           }
 
@@ -94,6 +106,7 @@ export class Lexer {
               value: "<=",
               start,
               end: this.pos - 1,
+              line: this.line
             };
           }
 
@@ -119,11 +132,33 @@ export class Lexer {
       value,
       start: this.pos - value.length,
       end: this.pos - 1,
+      line: this.line
     };
   }
 
   peek(): string {
     return this.src[this.pos + 1];
+  }
+
+  readDirective(): Token {
+    const start = this.pos;
+
+    this.pos++; // skip initial hash character. it's useless (?)
+    let ch = this.src[this.pos];
+
+    while (isAlphaNumeric(ch)) {
+        ch = this.src[this.pos++];
+    }
+
+    const text = this.src.slice(start, this.pos-1);
+
+    return {
+        type: DIRECTIVES[text],
+        value: text, 
+        start: start,
+        end: this.pos - 1,
+        line: this.line
+    }
   }
 
   readIdentifier(): Token {
@@ -140,6 +175,7 @@ export class Lexer {
       value: text,
       start,
       end: this.pos - 1,
+      line: this.line
     };
   }
 
@@ -155,6 +191,7 @@ export class Lexer {
       value: this.src.slice(start, this.pos),
       start,
       end: this.pos - 1,
+      line: this.line
     };
   }
 
@@ -180,6 +217,7 @@ export class Lexer {
       value,
       start,
       end: this.pos - 1,
+      line: this.line
     };
   }
 }
